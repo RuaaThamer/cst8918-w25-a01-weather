@@ -37,7 +37,7 @@ export async function loader() {
 
 export default function CurrentConditions() {
   const { currentConditions } = useLoaderData<typeof loader>()
-  const weather = currentConditions.weather[0]
+  const weather = currentConditions?.weather?.[0];
   return (
     <>
       <main
@@ -63,9 +63,9 @@ export default function CurrentConditions() {
             alignItems: 'center',
           }}
         >
-          <img src={getWeatherIconUrl(weather.icon)} alt="" />
+          <img src={getWeatherIconUrl(weather?.icon || "01d")} alt="" />
           <div style={{ fontSize: '2rem' }}>
-            {currentConditions.main.temp.toFixed(1)}°C
+            {capitalizeFirstLetter(weather?.description || "No weather data")}
           </div>
         </div>
         <p
@@ -74,18 +74,18 @@ export default function CurrentConditions() {
             fontWeight: '400',
           }}
         >
-          {capitalizeFirstLetter(weather.description)}. Feels like{' '}
-          {currentConditions.main['feels_like'].toFixed(1)}°C.
+          {capitalizeFirstLetter(weather?.description || "No weather data")}. Feels like{' '}
+          {currentConditions?.main?.feels_like?.toFixed(1) ?? "N/A"}°C.
           <br />
           <span style={{ color: 'hsl(220, 23%, 60%)', fontSize: '0.85rem' }}>
             updated at{' '}
-            {new Intl.DateTimeFormat('en-CA', {
+            {currentConditions?.dt ? new Intl.DateTimeFormat('en-CA', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
               hour: 'numeric',
               minute: '2-digit',
-            }).format(currentConditions.dt * 1000)}
+            }).format(currentConditions.dt * 1000) : "N/A"}
           </span>
         </p>
       </main>
